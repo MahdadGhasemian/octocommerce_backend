@@ -1,0 +1,439 @@
+name: Build and Push Docker Image
+on:
+  push:
+    branches:
+      - stage
+      - master
+      - stage-docker
+      - master-docker
+
+env:
+  HARBOR_REGISTRY_HOST: ${{ fromJSON(toJSON(secrets)).HARBOR_REGISTRY_HOST }}
+  HARBOR_USERNAME: ${{ fromJSON(toJSON(secrets)).HARBOR_USERNAME }}
+  HARBOR_PASSWORD: ${{ fromJSON(toJSON(secrets)).HARBOR_PASSWORD }}
+  HARBOR_PROJECT_NAME: ${{ fromJSON(toJSON(secrets)).HARBOR_PROJECT_NAME }}
+  DOCKER_USERNAME: ${{ fromJSON(toJSON(secrets)).DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ fromJSON(toJSON(secrets)).DOCKER_PASSWORD }}
+  DOCKER_PROJECT_NAME_AUTH_STAGE: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_AUTH_STAGE }}
+  DOCKER_PROJECT_NAME_AUTH_MASTER: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_AUTH_MASTER }}
+  DOCKER_PROJECT_NAME_BOT_STAGE: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_BOT_STAGE }}
+  DOCKER_PROJECT_NAME_BOT_MASTER: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_BOT_MASTER }}
+  DOCKER_PROJECT_NAME_FILE_STAGE: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_FILE_STAGE }}
+  DOCKER_PROJECT_NAME_FILE_MASTER: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_FILE_MASTER }}
+  DOCKER_PROJECT_NAME_NOTIFICATION_STAGE: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_NOTIFICATION_STAGE }}
+  DOCKER_PROJECT_NAME_NOTIFICATION_MASTER: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_NOTIFICATION_MASTER }}
+  DOCKER_PROJECT_NAME_STORAGE_STAGE: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_STORAGE_STAGE }}
+  DOCKER_PROJECT_NAME_STORAGE_MASTER: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_STORAGE_MASTER }}
+  DOCKER_PROJECT_NAME_STORE_STAGE: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_STORE_STAGE }}
+  DOCKER_PROJECT_NAME_STORE_MASTER: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_STORE_MASTER }}
+  DOCKER_PROJECT_NAME_TASK_STAGE: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_TASK_STAGE }}
+  DOCKER_PROJECT_NAME_TASK_MASTER: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_TASK_MASTER }}
+jobs:
+  auth_build_and_release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/stage' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Login to Harbor Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.HARBOR_REGISTRY_HOST }}
+          username: ${{ env.HARBOR_USERNAME }}
+          password: ${{ env.HARBOR_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image
+        run: |
+          REPO_NAME=$(basename ${{ github.repository }})
+          CONTAINER_BUILD_IMAGE=${{ env.HARBOR_REGISTRY_HOST }}/${{ env.HARBOR_PROJECT_NAME }}/${REPO_NAME}/auth/${{ github.ref_name }}:v0.1.${{ github.run_number }}
+          CONTAINER_RELEASE_IMAGE=${{ env.HARBOR_REGISTRY_HOST }}/${{ env.HARBOR_PROJECT_NAME }}/${REPO_NAME}/auth/${{ github.ref_name }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/auth/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  bot_build_and_release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/stage' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Login to Harbor Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.HARBOR_REGISTRY_HOST }}
+          username: ${{ env.HARBOR_USERNAME }}
+          password: ${{ env.HARBOR_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image
+        run: |
+          REPO_NAME=$(basename ${{ github.repository }})
+          CONTAINER_BUILD_IMAGE=${{ env.HARBOR_REGISTRY_HOST }}/${{ env.HARBOR_PROJECT_NAME }}/${REPO_NAME}/bot/${{ github.ref_name }}:v0.1.${{ github.run_number }}
+          CONTAINER_RELEASE_IMAGE=${{ env.HARBOR_REGISTRY_HOST }}/${{ env.HARBOR_PROJECT_NAME }}/${REPO_NAME}/bot/${{ github.ref_name }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/bot/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  file_build_and_release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/stage' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Login to Harbor Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.HARBOR_REGISTRY_HOST }}
+          username: ${{ env.HARBOR_USERNAME }}
+          password: ${{ env.HARBOR_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image
+        run: |
+          REPO_NAME=$(basename ${{ github.repository }})
+          CONTAINER_BUILD_IMAGE=${{ env.HARBOR_REGISTRY_HOST }}/${{ env.HARBOR_PROJECT_NAME }}/${REPO_NAME}/file/${{ github.ref_name }}:v0.1.${{ github.run_number }}
+          CONTAINER_RELEASE_IMAGE=${{ env.HARBOR_REGISTRY_HOST }}/${{ env.HARBOR_PROJECT_NAME }}/${REPO_NAME}/file/${{ github.ref_name }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/file/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  notification_build_and_release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/stage' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Login to Harbor Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.HARBOR_REGISTRY_HOST }}
+          username: ${{ env.HARBOR_USERNAME }}
+          password: ${{ env.HARBOR_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image
+        run: |
+          REPO_NAME=$(basename ${{ github.repository }})
+          CONTAINER_BUILD_IMAGE=${{ env.HARBOR_REGISTRY_HOST }}/${{ env.HARBOR_PROJECT_NAME }}/${REPO_NAME}/notification/${{ github.ref_name }}:v0.1.${{ github.run_number }}
+          CONTAINER_RELEASE_IMAGE=${{ env.HARBOR_REGISTRY_HOST }}/${{ env.HARBOR_PROJECT_NAME }}/${REPO_NAME}/notification/${{ github.ref_name }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/notification/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  storage_build_and_release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/stage' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Login to Harbor Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.HARBOR_REGISTRY_HOST }}
+          username: ${{ env.HARBOR_USERNAME }}
+          password: ${{ env.HARBOR_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image
+        run: |
+          REPO_NAME=$(basename ${{ github.repository }})
+          CONTAINER_BUILD_IMAGE=${{ env.HARBOR_REGISTRY_HOST }}/${{ env.HARBOR_PROJECT_NAME }}/${REPO_NAME}/storage/${{ github.ref_name }}:v0.1.${{ github.run_number }}
+          CONTAINER_RELEASE_IMAGE=${{ env.HARBOR_REGISTRY_HOST }}/${{ env.HARBOR_PROJECT_NAME }}/${REPO_NAME}/storage/${{ github.ref_name }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/storage/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  store_build_and_release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/stage' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Login to Harbor Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.HARBOR_REGISTRY_HOST }}
+          username: ${{ env.HARBOR_USERNAME }}
+          password: ${{ env.HARBOR_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image
+        run: |
+          REPO_NAME=$(basename ${{ github.repository }})
+          CONTAINER_BUILD_IMAGE=${{ env.HARBOR_REGISTRY_HOST }}/${{ env.HARBOR_PROJECT_NAME }}/${REPO_NAME}/store/${{ github.ref_name }}:v0.1.${{ github.run_number }}
+          CONTAINER_RELEASE_IMAGE=${{ env.HARBOR_REGISTRY_HOST }}/${{ env.HARBOR_PROJECT_NAME }}/${REPO_NAME}/store/${{ github.ref_name }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/store/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  task_build_and_release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/stage' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Login to Harbor Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.HARBOR_REGISTRY_HOST }}
+          username: ${{ env.HARBOR_USERNAME }}
+          password: ${{ env.HARBOR_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image
+        run: |
+          REPO_NAME=$(basename ${{ github.repository }})
+          CONTAINER_BUILD_IMAGE=${{ env.HARBOR_REGISTRY_HOST }}/${{ env.HARBOR_PROJECT_NAME }}/${REPO_NAME}/task/${{ github.ref_name }}:v0.1.${{ github.run_number }}
+          CONTAINER_RELEASE_IMAGE=${{ env.HARBOR_REGISTRY_HOST }}/${{ env.HARBOR_PROJECT_NAME }}/${REPO_NAME}/task/${{ github.ref_name }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/task/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+
+  auth_build_and_release_stage_docker:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/stage-docker'
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image to Docker Hub
+        run: |
+          VERSION_TAG=v0.1.${{ github.run_number }}
+          CONTAINER_BUILD_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_AUTH_STAGE }}:$VERSION_TAG
+          CONTAINER_RELEASE_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_AUTH_STAGE }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/auth/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  bot_build_and_release_stage_docker:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/stage-docker'
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image to Docker Hub
+        run: |
+          VERSION_TAG=v0.1.${{ github.run_number }}
+          CONTAINER_BUILD_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_BOT_STAGE }}:$VERSION_TAG
+          CONTAINER_RELEASE_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_BOT_STAGE }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/bot/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  file_build_and_release_stage_docker:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/stage-docker'
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image to Docker Hub
+        run: |
+          VERSION_TAG=v0.1.${{ github.run_number }}
+          CONTAINER_BUILD_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_FILE_STAGE }}:$VERSION_TAG
+          CONTAINER_RELEASE_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_FILE_STAGE }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/file/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  notification_build_and_release_stage_docker:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/stage-docker'
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image to Docker Hub
+        run: |
+          VERSION_TAG=v0.1.${{ github.run_number }}
+          CONTAINER_BUILD_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_NOTIFICATION_STAGE }}:$VERSION_TAG
+          CONTAINER_RELEASE_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_NOTIFICATION_STAGE }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/notification/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  storage_build_and_release_stage_docker:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/stage-docker'
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image to Docker Hub
+        run: |
+          VERSION_TAG=v0.1.${{ github.run_number }}
+          CONTAINER_BUILD_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_STORAGE_STAGE }}:$VERSION_TAG
+          CONTAINER_RELEASE_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_STORAGE_STAGE }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/storage/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  store_build_and_release_stage_docker:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/stage-docker'
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image to Docker Hub
+        run: |
+          VERSION_TAG=v0.1.${{ github.run_number }}
+          CONTAINER_BUILD_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_STORE_STAGE }}:$VERSION_TAG
+          CONTAINER_RELEASE_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_STORE_STAGE }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/store/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  task_build_and_release_stage_docker:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/stage-docker'
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image to Docker Hub
+        run: |
+          VERSION_TAG=v0.1.${{ github.run_number }}
+          CONTAINER_BUILD_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_TASK_STAGE }}:$VERSION_TAG
+          CONTAINER_RELEASE_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_TASK_STAGE }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/task/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+
+  auth_build_and_release_master_docker:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master-docker'
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image to Docker Hub
+        run: |
+          VERSION_TAG=v0.1.${{ github.run_number }}
+          CONTAINER_BUILD_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_AUTH_MASTER }}:$VERSION_TAG
+          CONTAINER_RELEASE_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_AUTH_MASTER }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/auth/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  bot_build_and_release_master_docker:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master-docker'
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image to Docker Hub
+        run: |
+          VERSION_TAG=v0.1.${{ github.run_number }}
+          CONTAINER_BUILD_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_BOT_MASTER }}:$VERSION_TAG
+          CONTAINER_RELEASE_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_BOT_MASTER }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/bot/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  file_build_and_release_master_docker:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master-docker'
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image to Docker Hub
+        run: |
+          VERSION_TAG=v0.1.${{ github.run_number }}
+          CONTAINER_BUILD_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_FILE_MASTER }}:$VERSION_TAG
+          CONTAINER_RELEASE_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_FILE_MASTER }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/file/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  notification_build_and_release_master_docker:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master-docker'
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image to Docker Hub
+        run: |
+          VERSION_TAG=v0.1.${{ github.run_number }}
+          CONTAINER_BUILD_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_NOTIFICATION_MASTER }}:$VERSION_TAG
+          CONTAINER_RELEASE_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_NOTIFICATION_MASTER }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/notification/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  storage_build_and_release_master_docker:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master-docker'
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image to Docker Hub
+        run: |
+          VERSION_TAG=v0.1.${{ github.run_number }}
+          CONTAINER_BUILD_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_STORAGE_MASTER }}:$VERSION_TAG
+          CONTAINER_RELEASE_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_STORAGE_MASTER }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/storage/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  store_build_and_release_master_docker:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master-docker'
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image to Docker Hub
+        run: |
+          VERSION_TAG=v0.1.${{ github.run_number }}
+          CONTAINER_BUILD_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_STORE_MASTER }}:$VERSION_TAG
+          CONTAINER_RELEASE_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_STORE_MASTER }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/store/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE
+  task_build_and_release_master_docker:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master-docker'
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD}}
+      - uses: actions/checkout@v4
+      - name: Build and push Docker image to Docker Hub
+        run: |
+          VERSION_TAG=v0.1.${{ github.run_number }}
+          CONTAINER_BUILD_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_TASK_MASTER }}:$VERSION_TAG
+          CONTAINER_RELEASE_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_TASK_MASTER }}:latest
+          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/task/Dockerfile .
+          docker push $CONTAINER_BUILD_IMAGE
+          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+          docker push $CONTAINER_RELEASE_IMAGE

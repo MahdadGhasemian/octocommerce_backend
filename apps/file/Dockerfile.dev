@@ -1,0 +1,23 @@
+# ============== Stage 1 ================
+FROM mahdad1988/node20-chromium:v1.0.0 As development
+
+RUN npm install -g pnpm
+
+WORKDIR /usr/src/app
+
+COPY package.json ./
+COPY pnpm-lock.yaml ./
+COPY tsconfig.json tsconfig.json
+COPY nest-cli.json nest-cli.json
+
+COPY apps/file apps/file
+COPY libs libs
+
+RUN PUPPETEER_SKIP_DOWNLOAD=true pnpm install -r
+
+RUN mkdir -p /usr/src/values/invoices_temporary
+
+ENV INVOICE_GENERATE_TEMPORARY_PATH=/usr/src/values/invoices_temporary
+ENV INVOICE_TEMPLATE_PATH=/usr/src/templates
+
+RUN pnpm run build file

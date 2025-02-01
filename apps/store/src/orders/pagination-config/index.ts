@@ -1,0 +1,47 @@
+import { Order } from '@app/store';
+import { PaginateConfig } from 'nestjs-paginate';
+
+export const ORDER_PAGINATION_CONFIG: PaginateConfig<Order> = {
+  sortableColumns: [
+    'id',
+    'order_status',
+    'order_invoice_number',
+    'order_bank_identifier_code',
+    'subtotal',
+    'discount_percentage',
+    'discount_amount',
+    'user_profit_discount_percentage',
+    'user_profit_discount_amount',
+    'tax_on_profit_percentage_default',
+    'tax_rate_percentage',
+    'tax_amount',
+    'round_amount',
+    'total',
+    'note',
+    'is_paid',
+    'rejected_note',
+    'delivery_date',
+    'due_date',
+  ],
+  nullSort: 'last',
+  defaultSortBy: [['id', 'DESC']],
+  searchableColumns: ['total', 'user.first_name', 'user.last_name'],
+  // select: ['id', 'name', 'description', 'image'],
+  relations: [
+    'user',
+    'payments',
+    'order_items',
+    'order_items',
+    'order_items.product',
+    'contact',
+    'billing_contact',
+    'delivery',
+    'delivery.delivery_method',
+  ],
+  filterableColumns: {
+    total: true,
+    note: true,
+    order_status: true,
+  },
+  maxLimit: 1000,
+};

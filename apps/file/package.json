@@ -1,0 +1,15 @@
+{
+  "name": "@octocommerce_backend/file",
+  "version": "0.0.1",
+  "description": "",
+  "author": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "form-data": "^4.0.0",
+    "handlebars": "^4.7.8",
+    "moment-jalaali": "^0.10.0",
+    "puppeteer": "^21.5.2"
+  }
+}

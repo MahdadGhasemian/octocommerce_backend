@@ -1,0 +1,242 @@
+name: octo_commerce
+
+services:
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx-development-gateway.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - '4058:4058'
+    depends_on:
+      - auth
+      - store
+      - storage
+      - task
+      - notification
+      - file
+      - bot
+
+  auth:
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile.dev
+      target: development
+    command: pnpm run start:dev auth
+    env_file:
+      - ./apps/auth/.env
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - rabbitmq
+      - postgres
+      - redis
+
+  store:
+    build:
+      context: .
+      dockerfile: ./apps/store/Dockerfile.dev
+      target: development
+    command: pnpm run start:dev store
+    env_file:
+      - ./apps/store/.env
+    ports:
+      - '3001:3001'
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - rabbitmq
+      - postgres
+      - redis
+
+  storage:
+    build:
+      context: .
+      dockerfile: ./apps/storage/Dockerfile.dev
+      target: development
+    command: pnpm run start:dev storage
+    env_file:
+      - ./apps/storage/.env
+    ports:
+      - '3002:3002'
+    volumes:
+      - .:/usr/src/app
+      - images_data_octo_commerce:/usr/src/values/images
+      - documents_data_octo_commerce:/usr/src/values/documents
+      - media_data_octo_commerce:/usr/src/values/media
+      - compressed_data_octo_commerce:/usr/src/values/compressed
+      - cache_images_data_octo_commerce:/usr/src/values/cache_images
+      - documents_invoice_data_octo_commerce:/usr/src/values/documents_invoice
+      - images_data_octo_commerce_private:/usr/src/values/images_private
+      - documents_data_octo_commerce_private:/usr/src/values/documents_private
+      - media_data_octo_commerce_private:/usr/src/values/media_private
+      - compressed_data_octo_commerce_private:/usr/src/values/compressed_private
+      - cache_images_data_octo_commerce_private:/usr/src/values/cache_images_private
+      - temporary_file_octo_commerce:/usr/src/values/temporary_file
+    depends_on:
+      - rabbitmq
+      - postgres
+      - minio
+
+  task:
+    build:
+      context: .
+      dockerfile: ./apps/task/Dockerfile.dev
+      target: development
+    command: pnpm run start:dev task
+    env_file:
+      - ./apps/task/.env
+    ports:
+      - '3003:3003'
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - rabbitmq
+      - postgres
+      - redis
+
+  notification:
+    build:
+      context: .
+      dockerfile: ./apps/notification/Dockerfile.dev
+      target: development
+    command: pnpm run start:dev notification
+    env_file:
+      - ./apps/notification/.env
+    ports:
+      - '3004:3004'
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - rabbitmq
+      - postgres
+      - redis
+
+  file:
+    build:
+      context: .
+      dockerfile: ./apps/file/Dockerfile.dev
+      target: development
+    command: pnpm run start:dev file
+    env_file:
+      - ./apps/file/.env
+    ports:
+      - '3005:3005'
+    volumes:
+      - .:/usr/src/app
+      - invoices_data_octo_commerce:/usr/src/values/invoices_temporary
+      - ./apps/file/src/invoice/pdf-generator/templates:/usr/src/templates
+    depends_on:
+      - rabbitmq
+      - postgres
+      - redis
+
+  bot:
+    build:
+      context: .
+      dockerfile: ./apps/bot/Dockerfile.dev
+      target: development
+    command: pnpm run start:dev bot
+    env_file:
+      - ./apps/bot/.env
+    ports:
+      - '3006:3006'
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - rabbitmq
+      - postgres
+      - redis
+
+  rabbitmq:
+    image: rabbitmq:3.10-management
+    ports:
+      - '15678:15672'
+    env_file:
+      - .env
+    volumes:
+      - rabbitmq_data_octo_commerce:/var/lib/rabbitmq
+
+  postgres:
+    image: postgres
+    env_file:
+      - .env
+    environment:
+      PGDATA: /data/postgres
+    volumes:
+      - postgres_data_octo_commerce:/data/postgres
+    ports:
+      - '5438:5432'
+    logging:
+      driver: none
+
+  pgadmin4:
+    image: elestio/pgadmin
+    env_file:
+      - .env
+    environment:
+      PGADMIN_LISTEN_PORT: 8080
+    volumes:
+      - pgadmin_data_octo_commerce:/var/lib/pgadmin
+    ports:
+      - '8088:8080'
+    logging:
+      driver: none
+
+  redis:
+    image: bitnami/redis
+    ports:
+      - 6378:6379
+    volumes:
+      - redis_data_octo_commerce_:/data
+    env_file:
+      - .env
+    environment:
+      ALLOW_EMPTY_PASSWORD: no
+
+  redis-insight:
+    image: redis/redisinsight
+    restart: always
+    ports:
+      - '5548:5540'
+    volumes:
+      - redis_insight_data_octo_commerce:/data
+
+  minio:
+    image: bitnami/minio
+    ports:
+      - 9000:9000
+      - 9001:9001
+    env_file:
+      - .env
+    volumes:
+      - minio_data_octo_commerce:/bitnami/minio/data
+
+volumes:
+  postgres_data_octo_commerce:
+  pgadmin_data_octo_commerce:
+  redis_data_octo_commerce_:
+  redis_insight_data_octo_commerce:
+  minio_data_octo_commerce:
+  rabbitmq_data_octo_commerce:
+  images_data_octo_commerce:
+  documents_data_octo_commerce:
+  media_data_octo_commerce:
+  compressed_data_octo_commerce:
+  cache_images_data_octo_commerce:
+  documents_invoice_data_octo_commerce:
+  images_data_octo_commerce_private:
+  documents_data_octo_commerce_private:
+  media_data_octo_commerce_private:
+  compressed_data_octo_commerce_private:
+  cache_images_data_octo_commerce_private:
+  temporary_file_octo_commerce:
+  invoices_data_octo_commerce:
+  auth_node_modules__octo_commerce:
+  bot_node_modules__octo_commerce:
+  file_node_modules__octo_commerce:
+  notification_node_modules__octo_commerce:
+  storage_node_modules__octo_commerce:
+  store_node_modules__octo_commerce:
+  task_node_modules__octo_commerce:
