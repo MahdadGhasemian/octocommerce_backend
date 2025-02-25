@@ -58,7 +58,7 @@ export class HttpCacheInterceptor extends CacheInterceptor {
       GENERAL_CACHE_KEY,
     );
 
-    // Skip cahcing for undefined chace_part
+    // Skip cahcing for undefined cache_part
     if (!isGeneralCache && !cache_part) {
       return undefined;
     }
