@@ -1,5 +1,4 @@
 name: octo_commerce
-
 services:
   # nginx:
   #   image: nginx:latest
@@ -16,6 +15,7 @@ services:
   #     - file
   #     - bot
 
+  # Auth Service
   auth:
     build:
       context: .
@@ -32,7 +32,7 @@ services:
       - rabbitmq
       - postgres
       - redis
-
+  # Store Service
   store:
     build:
       context: .
@@ -49,7 +49,7 @@ services:
       - rabbitmq
       - postgres
       - redis
-
+  # Storage Service
   storage:
     build:
       context: .
@@ -66,7 +66,7 @@ services:
       - rabbitmq
       - postgres
       - minio
-
+  # Task Service
   task:
     build:
       context: .
@@ -83,7 +83,7 @@ services:
       - rabbitmq
       - postgres
       - redis
-
+  # Notification Service
   notification:
     build:
       context: .
@@ -100,7 +100,7 @@ services:
       - rabbitmq
       - postgres
       - redis
-
+  # File Service
   file:
     build:
       context: .
@@ -119,7 +119,7 @@ services:
       - rabbitmq
       - postgres
       - redis
-
+  # Bot Service
   bot:
     build:
       context: .
@@ -136,7 +136,7 @@ services:
       - rabbitmq
       - postgres
       - redis
-
+  # RabbitMQ
   rabbitmq:
     image: rabbitmq:3.10-management
     ports:
@@ -145,7 +145,7 @@ services:
       - .env
     volumes:
       - rabbitmq_data_octo_commerce:/var/lib/rabbitmq
-
+  #PostgreSql
   postgres:
     image: postgres
     env_file:
@@ -154,11 +154,12 @@ services:
       PGDATA: /data/postgres
     volumes:
       - postgres_data_octo_commerce:/data/postgres
+      - ./init-scripts:/docker-entrypoint-initdb.d # Mount seed data
     ports:
       - '5438:5432'
     logging:
       driver: none
-
+  # PgAdmin
   pgadmin4:
     image: elestio/pgadmin
     env_file:
@@ -174,7 +175,7 @@ services:
     attach: false
     depends_on:
       - postgres
-
+  # Redis
   redis:
     image: bitnami/redis
     ports:
@@ -185,14 +186,13 @@ services:
       - .env
     environment:
       ALLOW_EMPTY_PASSWORD: no
-
   redis-insight:
     image: redis/redisinsight
     ports:
       - '5548:5540'
     volumes:
       - redis_insight_data_octo_commerce:/data
-
+  # Minio
   minio:
     image: bitnami/minio
     ports:
@@ -202,7 +202,7 @@ services:
       - .env
     volumes:
       - minio_data_octo_commerce:/bitnami/minio/data
-
+# Volumes
 volumes:
   postgres_data_octo_commerce:
   pgadmin_data_octo_commerce:
