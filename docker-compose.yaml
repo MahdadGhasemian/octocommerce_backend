@@ -188,7 +188,6 @@ services:
 
   redis-insight:
     image: redis/redisinsight
-    restart: always
     ports:
       - '5548:5540'
     volumes:
