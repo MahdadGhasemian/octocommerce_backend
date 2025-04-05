@@ -11,7 +11,7 @@ import {
 } from '@app/common/events/product.event';
 import { ConflictException, Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { Cron, CronExpression } from '@nestjs/schedule';
+// import { Cron, CronExpression } from '@nestjs/schedule';
 import { lastValueFrom } from 'rxjs';
 import { ScrapeHelper } from './scrape-helper';
 import { ScrapesRepository } from './scrapes.repository';
@@ -53,11 +53,11 @@ export class ScrapesService {
   }
 
   // Runs every day at midnight
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
-  handleMidnightJob() {
-    this.job_is_running = true;
-    this.startJob();
-  }
+  // @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  // handleMidnightJob() {
+  //   this.job_is_running = true;
+  //   this.startJob();
+  // }
 
   private async startJob() {
     const session_id = randomBytes(16).toString('hex');

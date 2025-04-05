@@ -14,8 +14,7 @@ docker-compose up
 docker-compose up # --build
 ```
 
-- [Developing Domain](http://localhost:4058)
-- [Store Doc](http://192.168.1.118:3001/docs#)
+- [Store Doc](http://localhost:3001/docs#)
 
 ## Web UI Tools
 

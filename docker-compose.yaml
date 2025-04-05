@@ -1,21 +1,21 @@
 name: octo_commerce
-
 services:
-  nginx:
-    image: nginx:latest
-    volumes:
-      - ./nginx-development-gateway.conf:/etc/nginx/conf.d/default.conf
-    ports:
-      - '4058:4058'
-    depends_on:
-      - auth
-      - store
-      - storage
-      - task
-      - notification
-      - file
-      - bot
+  # nginx:
+  #   image: nginx:latest
+  #   volumes:
+  #     - ./nginx-development-gateway.conf:/etc/nginx/conf.d/default.conf
+  #   ports:
+  #     - '4058:4058'
+  #   depends_on:
+  #     - auth
+  #     - store
+  #     - storage
+  #     - task
+  #     - notification
+  #     - file
+  #     - bot
 
+  # Auth Service
   auth:
     build:
       context: .
@@ -32,7 +32,7 @@ services:
       - rabbitmq
       - postgres
       - redis
-
+  # Store Service
   store:
     build:
       context: .
@@ -49,7 +49,7 @@ services:
       - rabbitmq
       - postgres
       - redis
-
+  # Storage Service
   storage:
     build:
       context: .
@@ -62,23 +62,11 @@ services:
       - '3002:3002'
     volumes:
       - .:/usr/src/app
-      - images_data_octo_commerce:/usr/src/values/images
-      - documents_data_octo_commerce:/usr/src/values/documents
-      - media_data_octo_commerce:/usr/src/values/media
-      - compressed_data_octo_commerce:/usr/src/values/compressed
-      - cache_images_data_octo_commerce:/usr/src/values/cache_images
-      - documents_invoice_data_octo_commerce:/usr/src/values/documents_invoice
-      - images_data_octo_commerce_private:/usr/src/values/images_private
-      - documents_data_octo_commerce_private:/usr/src/values/documents_private
-      - media_data_octo_commerce_private:/usr/src/values/media_private
-      - compressed_data_octo_commerce_private:/usr/src/values/compressed_private
-      - cache_images_data_octo_commerce_private:/usr/src/values/cache_images_private
-      - temporary_file_octo_commerce:/usr/src/values/temporary_file
     depends_on:
       - rabbitmq
       - postgres
       - minio
-
+  # Task Service
   task:
     build:
       context: .
@@ -95,7 +83,7 @@ services:
       - rabbitmq
       - postgres
       - redis
-
+  # Notification Service
   notification:
     build:
       context: .
@@ -112,7 +100,7 @@ services:
       - rabbitmq
       - postgres
       - redis
-
+  # File Service
   file:
     build:
       context: .
@@ -131,7 +119,7 @@ services:
       - rabbitmq
       - postgres
       - redis
-
+  # Bot Service
   bot:
     build:
       context: .
@@ -148,7 +136,7 @@ services:
       - rabbitmq
       - postgres
       - redis
-
+  # RabbitMQ
   rabbitmq:
     image: rabbitmq:3.10-management
     ports:
@@ -157,7 +145,7 @@ services:
       - .env
     volumes:
       - rabbitmq_data_octo_commerce:/var/lib/rabbitmq
-
+  #PostgreSql
   postgres:
     image: postgres
     env_file:
@@ -166,11 +154,12 @@ services:
       PGDATA: /data/postgres
     volumes:
       - postgres_data_octo_commerce:/data/postgres
+      - ./init-scripts:/docker-entrypoint-initdb.d # Mount seed data
     ports:
       - '5438:5432'
     logging:
       driver: none
-
+  # PgAdmin
   pgadmin4:
     image: elestio/pgadmin
     env_file:
@@ -183,7 +172,10 @@ services:
       - '8088:8080'
     logging:
       driver: none
-
+    attach: false
+    depends_on:
+      - postgres
+  # Redis
   redis:
     image: bitnami/redis
     ports:
@@ -194,15 +186,13 @@ services:
       - .env
     environment:
       ALLOW_EMPTY_PASSWORD: no
-
   redis-insight:
     image: redis/redisinsight
-    restart: always
     ports:
       - '5548:5540'
     volumes:
       - redis_insight_data_octo_commerce:/data
-
+  # Minio
   minio:
     image: bitnami/minio
     ports:
@@ -212,7 +202,7 @@ services:
       - .env
     volumes:
       - minio_data_octo_commerce:/bitnami/minio/data
-
+# Volumes
 volumes:
   postgres_data_octo_commerce:
   pgadmin_data_octo_commerce:
@@ -220,18 +210,6 @@ volumes:
   redis_insight_data_octo_commerce:
   minio_data_octo_commerce:
   rabbitmq_data_octo_commerce:
-  images_data_octo_commerce:
-  documents_data_octo_commerce:
-  media_data_octo_commerce:
-  compressed_data_octo_commerce:
-  cache_images_data_octo_commerce:
-  documents_invoice_data_octo_commerce:
-  images_data_octo_commerce_private:
-  documents_data_octo_commerce_private:
-  media_data_octo_commerce_private:
-  compressed_data_octo_commerce_private:
-  cache_images_data_octo_commerce_private:
-  temporary_file_octo_commerce:
   invoices_data_octo_commerce:
   auth_node_modules__octo_commerce:
   bot_node_modules__octo_commerce:
