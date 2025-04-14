@@ -9,7 +9,7 @@ export const DOCUMENT_PRIVATE_BUCKET_NAME = 'private-documents';
 export const MEDIA_PRIVATE_BUCKET_NAME = 'private-media';
 export const COMPRESSED_PRIVATE_BUCKET_NAME = 'private-compressed';
 
-export const IMAGE_CACHE_BUCKET_NAME = 'chache-images';
+export const IMAGE_CACHE_BUCKET_NAME = 'cache-images';
 
 export const SUPPORTED_IMAGE_TO_RESIZE = [
   'image/jpeg', // jpg, jpeg
