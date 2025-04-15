@@ -23,7 +23,6 @@ export enum PaymentStatus {
 
 export enum PaymentType {
   RECEIPT = 'receipt',
-  DEBIT = 'debit',
   ONLINE = 'online',
 }
 

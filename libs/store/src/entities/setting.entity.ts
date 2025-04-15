@@ -20,4 +20,7 @@ export class Setting extends AbstractEntity<Setting> {
 
   @Column({ type: 'double precision', nullable: true })
   delivery_center_longitude: number;
+
+  @Column({ nullable: true })
+  product_code_prefix: string;
 }

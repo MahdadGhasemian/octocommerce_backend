@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class GetAllSettingDto {
   @ApiProperty({
@@ -59,4 +59,14 @@ export class GetAllSettingDto {
   @IsNumber()
   @Expose()
   delivery_center_longitude?: number;
+
+  @ApiProperty({
+    type: String,
+    example: 'p-',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  @Expose()
+  product_code_prefix?: string;
 }

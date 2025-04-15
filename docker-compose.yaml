@@ -1,19 +1,19 @@
 name: octo_commerce
 services:
-  # nginx:
-  #   image: nginx:latest
-  #   volumes:
-  #     - ./nginx-development-gateway.conf:/etc/nginx/conf.d/default.conf
-  #   ports:
-  #     - '4058:4058'
-  #   depends_on:
-  #     - auth
-  #     - store
-  #     - storage
-  #     - task
-  #     - notification
-  #     - file
-  #     - bot
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx-development-gateway.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - '4058:4058'
+    depends_on:
+      - auth
+      - store
+      - storage
+      - task
+      - notification
+      - file
+      - bot
 
   # Auth Service
   auth:
@@ -202,6 +202,26 @@ services:
       - .env
     volumes:
       - minio_data_octo_commerce:/bitnami/minio/data
+    entrypoint: >
+      /bin/sh -c "
+      /opt/bitnami/scripts/minio/run.sh &
+      sleep 10 &&
+      mc alias set octocommerce http://localhost:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD} &&
+      mc admin user add octocommerce ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY} &&
+      mc admin policy attach octocommerce readwrite --user=${MINIO_ACCESS_KEY} &&
+      mc mb --ignore-existing octocommerce/public-images &&
+      mc mb --ignore-existing octocommerce/public-documents &&
+      mc mb --ignore-existing octocommerce/public-media &&
+      mc mb --ignore-existing octocommerce/public-compressed &&
+      mc mb --ignore-existing octocommerce/public-documents-invoice &&
+      mc mb --ignore-existing octocommerce/private-images &&
+      mc mb --ignore-existing octocommerce/private-documents &&
+      mc mb --ignore-existing octocommerce/private-media &&
+      mc mb --ignore-existing octocommerce/private-compressed &&
+      mc mb --ignore-existing octocommerce/cache-images &&
+      mc mb --ignore-existing octocommerce/private-cache-images &&
+      tail -f /dev/null
+      "
 # Volumes
 volumes:
   postgres_data_octo_commerce:

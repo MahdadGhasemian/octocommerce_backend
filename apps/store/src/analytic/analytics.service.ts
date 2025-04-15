@@ -3,7 +3,7 @@ import { UsersRepository } from '../users/users.repository';
 import { OrdersRepository } from '../orders/orders.repository';
 import { ProductsRepository } from '../products/products.repository';
 import { endOfWeek, subWeeks } from 'date-fns';
-import { StocksRepository } from '../inventory/stocks.repository';
+import { MoreThanOrEqual } from 'typeorm';
 
 @Injectable()
 export class AnalyticsService {
@@ -11,19 +11,28 @@ export class AnalyticsService {
     private readonly usersRepository: UsersRepository,
     private readonly ordersRepository: OrdersRepository,
     private readonly productsRepository: ProductsRepository,
-    private readonly stocksRepository: StocksRepository,
-  ) {}
+  ) { }
 
   async stats() {
+    const currentDate = new Date();
+    const startDate = new Date(currentDate);
+    startDate.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(currentDate);
+    endDate.setHours(23, 59, 59, 999);
+
     const weekStartsOn = 6;
-    const oneWeekAgoEnd = endOfWeek(subWeeks(new Date(), 1), {
+    const oneWeekAgoEnd = endOfWeek(subWeeks(currentDate, 1), {
       weekStartsOn,
     });
 
-    const [totalUser, totalProduct, totalOrder] = await Promise.all([
+    const [totalUser, totalProduct, totalOrder, newOrder] = await Promise.all([
       this.usersRepository.count(),
       this.productsRepository.count(),
       this.ordersRepository.count(),
+      this.ordersRepository.countBy({
+        created_at: MoreThanOrEqual(oneWeekAgoEnd),
+      }),
     ]);
 
     return {
@@ -36,7 +45,7 @@ export class AnalyticsService {
       order: {
         total: totalOrder,
         new: {
-          value: 0,
+          value: newOrder,
           until: oneWeekAgoEnd.toISOString(),
           percentageChangeOneWeek: 0,
         },
@@ -48,7 +57,6 @@ export class AnalyticsService {
           percentageChangeOneMonth: 0,
         },
       },
-      stockInfo: [],
     };
   }
 }

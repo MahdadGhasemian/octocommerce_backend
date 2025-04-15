@@ -32,7 +32,7 @@ export class AuthService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @Inject(NOTIFICATION_SERVICE)
     private readonly notficationClient: ClientProxy,
-  ) {}
+  ) { }
 
   async getMobilePhoneOtp(getOtpDto: GetMobilePhoneOtpDto) {
     const otp = this.generateOtpCode();
@@ -350,10 +350,9 @@ export class AuthService {
       userId: user.id,
     };
 
+    const expiration_in_seconds = this.configService.get('JWT_EXPIRATION');
     const expires = new Date();
-    expires.setSeconds(
-      expires.getSeconds() + this.configService.get('JWT_EXPIRATION'),
-    );
+    expires.setSeconds(expires.getSeconds() + expiration_in_seconds);
 
     const token = this.jwtService.sign(tokenPayload);
 
@@ -361,6 +360,7 @@ export class AuthService {
       httpOnly: true,
       secure,
       expires,
+      maxAge: expiration_in_seconds * 1000,
       path: '/',
     };
 
@@ -377,19 +377,18 @@ export class AuthService {
     const sameSite = this.configService.get('COOKIE_CONFIG_SAME_SITE');
     const domain = this.configService.get('COOKIE_CONFIG_DOMAIN');
 
-    const expires = new Date(0);
-
     const config: CookieOptions = {
       httpOnly: true,
       secure,
-      expires,
+      expires: new Date(),
+      maxAge: 0,
       path: '/',
     };
 
     if (sameSite !== 'default') config.sameSite = sameSite;
     if (domain !== 'default') config.domain = domain;
 
-    response.cookie('Authentication', null, config);
+    response.cookie('Authentication', '', config);
 
     return null;
   }

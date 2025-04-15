@@ -23,9 +23,13 @@ export class ProductsService {
     private readonly productsRepository: ProductsRepository,
     private readonly categoriesService: CategoriesService,
     private readonly settingsService: SettingsService,
-  ) {}
+  ) { }
 
   async create(createProductDto: CreateProductDto) {
+    // read setting
+    const setting = await this.settingsService.readSetting();
+    const { product_code_prefix } = setting;
+
     let product = new Product({
       ...createProductDto,
       category: new Category({ id: createProductDto.category_id }),
@@ -52,7 +56,7 @@ export class ProductsService {
     product = await this.productsRepository.create(product);
 
     // Set product code and save
-    product.product_code = this.getProductCode(product.id);
+    product.product_code = this.getProductCode(product_code_prefix, product.id);
     product = await this.productsRepository.save(product);
 
     return this.findOneAdmin({ id: product.id });
@@ -300,8 +304,8 @@ export class ProductsService {
       .execute();
   }
 
-  private getProductCode = (id: number) => {
-    return `zek-${id}`;
+  private getProductCode = (product_code_prefix: string, id: number) => {
+    return `${product_code_prefix}${id}`;
   };
 
   private checkCategoryIdQuery = async (query: PaginateQuery) => {
@@ -331,15 +335,15 @@ export class ProductsService {
     // Modify the pagination config to include the descendant category filter
     return categoryIds?.length
       ? {
-          ...query,
-          filter: {
-            ...query.filter,
-            'category.id':
-              categoryIds?.length === 1
-                ? `$eq:${categoryIds[0]}`
-                : categoryIds.map((id) => `$or:$eq:${id}`),
-          },
-        }
+        ...query,
+        filter: {
+          ...query.filter,
+          'category.id':
+            categoryIds?.length === 1
+              ? `$eq:${categoryIds[0]}`
+              : categoryIds.map((id) => `$or:$eq:${id}`),
+        },
+      }
       : query;
   };
 }
