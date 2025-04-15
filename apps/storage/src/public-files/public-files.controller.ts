@@ -29,7 +29,7 @@ import { Response } from 'express';
 @ApiTags('PublicFiles')
 @Controller('public-files')
 export class PublicFilesController {
-  constructor(private readonly publicFilesService: PublicFilesService) {}
+  constructor(private readonly publicFilesService: PublicFilesService) { }
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
