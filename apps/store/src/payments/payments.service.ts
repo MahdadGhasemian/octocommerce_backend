@@ -519,9 +519,6 @@ export class PaymentsService {
     // Receipt Payment
     else if (payment_type === PaymentType.RECEIPT) {
     }
-    // Debit
-    else if (payment_type === PaymentType.DEBIT) {
-    }
   }
 
   private generatePaymentOrderId() {
