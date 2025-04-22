@@ -10,16 +10,6 @@ import { Product } from './product.entity';
 import { Order } from './order.entity';
 import { InventoryItem } from './inventory-item.entity';
 import { AbstractEntity } from '../../../common/src/database/abstract.entity';
-import { BonusType } from '../../../common/src/enum/enums';
-
-export interface BonusDataInterface {
-  bonus_id: number;
-  bonus_title: string;
-  bonus_type: BonusType;
-  bonus_constant_amount: number;
-  bonus_percentage_amount: number;
-  profit_amount: number;
-}
 
 @Entity()
 export class OrderItem extends AbstractEntity<OrderItem> {
@@ -28,9 +18,6 @@ export class OrderItem extends AbstractEntity<OrderItem> {
 
   @Column()
   quantity: number;
-
-  @Column({ type: 'jsonb', nullable: true })
-  bonus_data: BonusDataInterface;
 
   @Column()
   @Index()

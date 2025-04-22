@@ -8,7 +8,6 @@ import { ProductsModule } from '../products/products.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SettingsModule } from '../settings/settings.module';
-import { BonusesModule } from '../bonuses/bonuses.module';
 import { ContactsModule } from '../contacts/contacts.module';
 import {
   Delivery,
@@ -39,7 +38,6 @@ import { DeliveryMethodsModule } from '../delivery-methods/delivery-methods.modu
     ]),
     ProductsModule,
     SettingsModule,
-    BonusesModule,
     ContactsModule,
     DeliveryMethodsModule,
   ],

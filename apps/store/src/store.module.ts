@@ -22,7 +22,6 @@ import { APP_INTERCEPTOR, Reflector } from '@nestjs/core';
 import { SettingsModule } from './settings/settings.module';
 import { ContactsModule } from './contacts/contacts.module';
 import { UsersModule } from './users/users.module';
-import { BonusesModule } from './bonuses/bonuses.module';
 import { WalletsModule } from './wallets/wallets.module';
 import { WarehousesModule } from './warehouse/warehouses.module';
 import { InventoriesModule } from './inventory/inventories.module';
@@ -67,7 +66,6 @@ import { DeliveryMethodsModule } from './delivery-methods/delivery-methods.modul
     }),
     HealthModule,
     SettingsModule,
-    BonusesModule,
     UsersModule,
     ContactsModule,
     WarehousesModule,
