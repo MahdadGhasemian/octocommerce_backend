@@ -26,7 +26,6 @@ async function bootstrap() {
     .addTag('Inventories')
     .addTag('Categories')
     .addTag('Products')
-    .addTag('Bonuses')
     .addTag('Orders')
     .addTag('Payments')
     .addTag('Wallets')

@@ -13,7 +13,6 @@ env:
   DOCKER_PROJECT_NAME_NOTIFICATION: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_NOTIFICATION }}
   DOCKER_PROJECT_NAME_STORAGE: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_STORAGE }}
   DOCKER_PROJECT_NAME_STORE: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_STORE }}
-  DOCKER_PROJECT_NAME_TASK: ${{ fromJSON(toJSON(secrets)).DOCKER_PROJECT_NAME_TASK }}
 jobs:
   auth_build_and_release:
     runs-on: ubuntu-latest
@@ -126,25 +125,6 @@ jobs:
           CONTAINER_BUILD_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_STORE }}:$VERSION_TAG
           CONTAINER_RELEASE_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_STORE }}:latest
           docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/store/Dockerfile .
-          docker push $CONTAINER_BUILD_IMAGE
-          docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
-          docker push $CONTAINER_RELEASE_IMAGE
-  task_build_and_release:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ env.DOCKER_USERNAME }}
-          password: ${{ env.DOCKER_PASSWORD}}
-      - uses: actions/checkout@v4
-      - name: Build and push Docker image to Docker Hub
-        run: |
-          VERSION_TAG=v0.1.${{ github.run_number }}
-          CONTAINER_BUILD_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_TASK }}:$VERSION_TAG
-          CONTAINER_RELEASE_IMAGE=${{ env.DOCKER_USERNAME }}/${{ env.DOCKER_PROJECT_NAME_TASK }}:latest
-          docker build -t $CONTAINER_BUILD_IMAGE -f ./apps/task/Dockerfile .
           docker push $CONTAINER_BUILD_IMAGE
           docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
           docker push $CONTAINER_RELEASE_IMAGE

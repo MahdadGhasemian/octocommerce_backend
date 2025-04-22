@@ -66,8 +66,4 @@ export class GetOrderItemDto {
   @IsNumber()
   @Expose()
   quantity: number;
-
-  @ApiProperty({})
-  @Expose()
-  bonus_data: any;
 }

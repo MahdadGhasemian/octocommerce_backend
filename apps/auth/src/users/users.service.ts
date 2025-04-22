@@ -10,7 +10,6 @@ import {
   EVENT_NAME_USER_UPDATED,
   NOTIFICATION_SERVICE,
   STORE_SERVICE,
-  TASK_SERVICE,
   UserCreatedEvent,
   UserUpdatedEvent,
 } from '@app/common';
@@ -33,7 +32,6 @@ export class UsersService {
     private readonly accessesService: AccessesService,
     private readonly configService: ConfigService,
     @Inject(STORE_SERVICE) private readonly storeClient: ClientProxy,
-    @Inject(TASK_SERVICE) private readonly taskClient: ClientProxy,
     @Inject(NOTIFICATION_SERVICE)
     private readonly notificationClient: ClientProxy,
     @Inject(BOT_SERVICE) private readonly botClient: ClientProxy,
@@ -97,7 +95,6 @@ export class UsersService {
 
     const eventData = new UserCreatedEvent(user);
     this.storeClient.emit(EVENT_NAME_USER_CREATED, eventData);
-    this.taskClient.emit(EVENT_NAME_USER_CREATED, eventData);
     this.notificationClient.emit(EVENT_NAME_USER_CREATED, eventData);
     this.botClient.emit(EVENT_NAME_USER_CREATED, eventData);
 
@@ -156,7 +153,6 @@ export class UsersService {
 
     const eventData = new UserUpdatedEvent(user);
     this.storeClient.emit(EVENT_NAME_USER_UPDATED, eventData);
-    this.taskClient.emit(EVENT_NAME_USER_UPDATED, eventData);
     this.notificationClient.emit(EVENT_NAME_USER_UPDATED, eventData);
     this.botClient.emit(EVENT_NAME_USER_UPDATED, eventData);
 
@@ -202,7 +198,6 @@ export class UsersService {
 
     const eventData = new UserUpdatedEvent(user);
     this.storeClient.emit(EVENT_NAME_USER_UPDATED, eventData);
-    this.taskClient.emit(EVENT_NAME_USER_UPDATED, eventData);
     this.notificationClient.emit(EVENT_NAME_USER_UPDATED, eventData);
     this.botClient.emit(EVENT_NAME_USER_UPDATED, eventData);
 
@@ -236,7 +231,6 @@ export class UsersService {
 
     const eventData = new UserUpdatedEvent(user);
     this.storeClient.emit(EVENT_NAME_USER_UPDATED, eventData);
-    this.taskClient.emit(EVENT_NAME_USER_UPDATED, eventData);
     this.notificationClient.emit(EVENT_NAME_USER_UPDATED, eventData);
     this.botClient.emit(EVENT_NAME_USER_UPDATED, eventData);
 

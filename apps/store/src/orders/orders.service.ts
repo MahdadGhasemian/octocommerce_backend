@@ -8,7 +8,6 @@ import {
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import {
-  BonusType,
   DeliveryCreatedEvent,
   DeliveryPricingType,
   DeliveryStatus,
@@ -37,7 +36,6 @@ import { OrderItemsRepository } from './order-items.repository';
 import { ProductsService } from '../products/products.service';
 import { UpdateIsPaidOrderDto } from './dto/update-paid-orders.dto';
 import { SettingsService } from '../settings/settings.service';
-import { BonusesService } from '../bonuses/bonuses.service';
 import { PaginateQuery, paginate } from 'nestjs-paginate';
 import { ORDER_PAGINATION_CONFIG } from './pagination-config';
 import { ContactsService } from '../contacts/contacts.service';
@@ -49,7 +47,6 @@ import { CreateOrderDeliveryDto } from './dto/delivery/create-order-delivery.dto
 import { UpdateOrderDeliveryDto } from './dto/delivery/update-order-delivery.dto';
 import { RejectOrderDeliveryDto } from './dto/delivery/reject-order-delivery.dto';
 import {
-  BonusDataInterface,
   Contact,
   ContactData,
   Delivery,
@@ -73,7 +70,6 @@ export class OrdersService {
     private readonly orderItemsRepository: OrderItemsRepository,
     private readonly productsService: ProductsService,
     private readonly settingsService: SettingsService,
-    private readonly bonusesService: BonusesService,
     private readonly contactsService: ContactsService,
     private readonly deliveryMethodsService: DeliveryMethodsService,
     @Inject(NOTIFICATION_SERVICE)
@@ -146,18 +142,6 @@ export class OrdersService {
             throw new NotFoundException('Product Not Found');
           }
           const orderItem = new OrderItem({});
-
-          // read bonus
-          const bonus_data = await this.checkAndCalculateBonus(
-            user_id,
-            product_id,
-            product.sale_price,
-            item.quantity,
-            tax_rate_default,
-          );
-          if (bonus_data) {
-            orderItem.bonus_data = bonus_data;
-          }
 
           // subtotal
           subtotal += product.sale_price * item.quantity;
@@ -622,27 +606,12 @@ export class OrdersService {
     // read order
     const order = await this.findOne({ ...orderDto }, identifierQuery);
 
-    // user
-    const user_id = order.user_id;
-
     await this.ordersRepository.runInTransaction(async () => {
       // new Item
       const orderItem = new OrderItem({});
       orderItem.product = product;
       orderItem.sale_price = product.sale_price;
       orderItem.quantity = quantity;
-
-      // read bonus
-      const bonus_data = await this.checkAndCalculateBonus(
-        user_id,
-        product_id,
-        product.sale_price,
-        quantity,
-        order.tax_rate_percentage,
-      );
-      if (bonus_data) {
-        orderItem.bonus_data = bonus_data;
-      }
 
       order.order_items = order.order_items.concat(orderItem);
 
@@ -704,9 +673,6 @@ export class OrdersService {
     // read order
     const order = await this.findOne({ ...orderDto }, identifierQuery);
 
-    // user
-    const user_id = order.user_id;
-
     await this.ordersRepository.runInTransaction(async () => {
       // update Item
       const orderItem = order.order_items.find(
@@ -715,18 +681,6 @@ export class OrdersService {
       orderItem.product = product;
       orderItem.sale_price = product.sale_price;
       orderItem.quantity = quantity;
-
-      // read bonus
-      const bonus_data = await this.checkAndCalculateBonus(
-        user_id,
-        product_id,
-        product.sale_price,
-        quantity,
-        order.tax_rate_percentage,
-      );
-      if (bonus_data) {
-        orderItem.bonus_data = bonus_data;
-      }
 
       // update subtotal
       order.subtotal =
@@ -1063,46 +1017,6 @@ export class OrdersService {
     }
 
     return delivery_cost;
-  };
-
-  private checkAndCalculateBonus = async (
-    user_id: number,
-    product_id: number,
-    sale_price: number,
-    quantity: number,
-    tax_rate_percentage: number,
-  ): Promise<BonusDataInterface> => {
-    // read bonus rules
-    const bonus = await this.bonusesService.findOneByDateRange(
-      user_id,
-      product_id,
-    );
-
-    if (bonus) {
-      let profit_amount = 0;
-      if (bonus.bonus_type === BonusType.CONSTANT) {
-        profit_amount = bonus.constant_amount || 0;
-      } else if (bonus.bonus_type === BonusType.PERCENTAGE) {
-        const taxRate = parseFloat((1 + tax_rate_percentage / 100).toFixed(2));
-
-        profit_amount = Math.floor(
-          (+sale_price * +quantity * (bonus.percentage_amount || 0)) / 100,
-        );
-        profit_amount *= taxRate;
-        profit_amount = +profit_amount.toFixed(2);
-      }
-
-      return {
-        bonus_id: bonus.id,
-        bonus_title: bonus.title,
-        bonus_type: bonus.bonus_type,
-        bonus_constant_amount: bonus.constant_amount,
-        bonus_percentage_amount: bonus.percentage_amount,
-        profit_amount,
-      };
-    }
-
-    return null;
   };
 
   private addConfirmatinDataToOrder = (

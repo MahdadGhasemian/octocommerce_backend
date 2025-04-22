@@ -76,12 +76,6 @@ export enum TransactionType {
 
 export enum TransactionNote {
   DISCOUNT_PROFIT = 'discount_profit',
-  BONUS_PROFIT = 'bonus_profit',
-}
-
-export enum BonusType {
-  CONSTANT = 'constant',
-  PERCENTAGE = 'percentage',
 }
 
 export enum InventoryType {
@@ -93,12 +87,6 @@ export enum InventoryType {
 export enum OperatorType {
   POSITIVE = 'positive',
   NEGATIVE = 'negative',
-}
-
-export enum TaskPriority {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
 }
 
 export enum CommentType {

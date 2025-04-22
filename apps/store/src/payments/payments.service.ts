@@ -213,7 +213,6 @@ export class PaymentsService {
     let result;
     let wallet;
     let userProfitDiscountAmount = 0;
-    let userProfitBonusAmount = 0;
     const totalAlreadyPaid = await this.paymentsRepository.sum('amount', {
       order_id,
       payment_status: PaymentStatus.CONFIRMED,
@@ -231,16 +230,9 @@ export class PaymentsService {
       wallet = await this.walletsService.findOne({ user_id }, {});
       // read user discount profit
       userProfitDiscountAmount = +order?.user_profit_discount_amount || 0;
-      // read user bonus profit
-      userProfitBonusAmount =
-        order?.order_items?.reduce(
-          (acc, item) => acc + +(item?.bonus_data?.profit_amount || 0),
-          0,
-        ) || 0;
 
       // new balance
-      wallet.balance =
-        +wallet.balance + userProfitDiscountAmount + userProfitBonusAmount || 0;
+      wallet.balance = +wallet.balance + userProfitDiscountAmount || 0;
     }
 
     //
@@ -254,21 +246,6 @@ export class PaymentsService {
         walletTransaction.amount = userProfitDiscountAmount;
         walletTransaction.transaction_type = TransactionType.CREDIT;
         walletTransaction.transaction_note = TransactionNote.DISCOUNT_PROFIT;
-        walletTransaction.user = new User({ id: user_id });
-        walletTransaction.order = order;
-
-        await this.walletTransactionsService.create(
-          walletTransaction,
-          new User({ id: user_id }),
-        );
-      }
-
-      // wallet transaction
-      if (userProfitBonusAmount) {
-        const walletTransaction = new WalletTransaction({});
-        walletTransaction.amount = userProfitBonusAmount;
-        walletTransaction.transaction_type = TransactionType.CREDIT;
-        walletTransaction.transaction_note = TransactionNote.BONUS_PROFIT;
         walletTransaction.user = new User({ id: user_id });
         walletTransaction.order = order;
 

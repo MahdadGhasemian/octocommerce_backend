@@ -279,8 +279,6 @@ importers:
         specifier: ^3.6.0
         version: 3.6.0
 
-  apps/task: {}
-
 packages:
 
   '@ampproject/remapping@2.3.0':

@@ -178,7 +178,7 @@ export class InventoriesService {
       updateInventoryDto.inventory_description ??
       inventory.inventory_description;
 
-    // Save the updated Bonus entity
+    // Save the updated the entity
     const result = await this.inventoriesRepository.save(inventory);
 
     return this.findOne({ id: result.id });

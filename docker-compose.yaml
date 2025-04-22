@@ -10,7 +10,6 @@ services:
       - auth
       - store
       - storage
-      - task
       - notification
       - file
       - bot
@@ -66,23 +65,6 @@ services:
       - rabbitmq
       - postgres
       - minio
-  # Task Service
-  task:
-    build:
-      context: .
-      dockerfile: ./apps/task/Dockerfile.dev
-      target: development
-    command: pnpm run start:dev task
-    env_file:
-      - ./apps/task/.env
-    ports:
-      - '3003:3003'
-    volumes:
-      - .:/usr/src/app
-    depends_on:
-      - rabbitmq
-      - postgres
-      - redis
   # Notification Service
   notification:
     build:
@@ -237,4 +219,3 @@ volumes:
   notification_node_modules__octo_commerce:
   storage_node_modules__octo_commerce:
   store_node_modules__octo_commerce:
-  task_node_modules__octo_commerce:
