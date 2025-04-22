@@ -4,7 +4,6 @@ import { DatabaseModule } from '@app/common';
 import { UsersRepository } from './users.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { WalletsModule } from '../wallets/wallets.module';
 import { UsersController } from './users.controller';
 import { User } from '@app/store';
 import { ContactsModule } from '../contacts/contacts.module';
@@ -19,7 +18,6 @@ import { ContactsModule } from '../contacts/contacts.module';
       inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([User]),
-    WalletsModule,
     ContactsModule,
   ],
   controllers: [UsersController],

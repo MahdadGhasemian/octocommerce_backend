@@ -27,8 +27,6 @@ import {
   PaymentType,
   STORE_SERVICE,
   SedadProvider,
-  TransactionNote,
-  TransactionType,
   getPaginationConfig,
 } from '@app/common';
 import { PaymentsRepository } from './payments.repository';
@@ -37,15 +35,7 @@ import { OrdersService } from '../orders/orders.service';
 import { PaginateQuery, paginate } from 'nestjs-paginate';
 import { PAYMENT_PAGINATION_CONFIG } from './pagination-config';
 import { RejectPaymentDto } from './dto/reject-payment.dto';
-import { WalletsService } from '../wallets/wallets.service';
-import { WalletTransactionsService } from '../wallets/wallet-transactions.service';
-import {
-  Order,
-  Payment,
-  PaymentProviderDataInterface,
-  User,
-  WalletTransaction,
-} from '@app/store';
+import { Order, Payment, PaymentProviderDataInterface, User } from '@app/store';
 import { ClientProxy } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { SadadResultPaymentDto } from './dto/sadad-result-payment.dto';
@@ -56,8 +46,6 @@ export class PaymentsService {
   constructor(
     private readonly paymentsRepository: PaymentsRepository,
     private readonly ordersService: OrdersService,
-    private readonly walletsService: WalletsService,
-    private readonly walletTransactionsService: WalletTransactionsService,
     @Inject(NOTIFICATION_SERVICE)
     private readonly notficationClient: ClientProxy,
     @Inject(STORE_SERVICE)
@@ -211,8 +199,6 @@ export class PaymentsService {
 
     //
     let result;
-    let wallet;
-    let userProfitDiscountAmount = 0;
     const totalAlreadyPaid = await this.paymentsRepository.sum('amount', {
       order_id,
       payment_status: PaymentStatus.CONFIRMED,
@@ -225,36 +211,7 @@ export class PaymentsService {
     const isCompleted = totalPaidAmount + newAmount >= total;
 
     //
-    if (isCompleted) {
-      // read wallet data
-      wallet = await this.walletsService.findOne({ user_id }, {});
-      // read user discount profit
-      userProfitDiscountAmount = +order?.user_profit_discount_amount || 0;
-
-      // new balance
-      wallet.balance = +wallet.balance + userProfitDiscountAmount || 0;
-    }
-
-    //
     await this.paymentsRepository.runInTransaction(async () => {
-      // wallet
-      if (wallet) await this.walletsService.update(wallet.id, wallet, {});
-
-      // wallet transaction
-      if (userProfitDiscountAmount) {
-        const walletTransaction = new WalletTransaction({});
-        walletTransaction.amount = userProfitDiscountAmount;
-        walletTransaction.transaction_type = TransactionType.CREDIT;
-        walletTransaction.transaction_note = TransactionNote.DISCOUNT_PROFIT;
-        walletTransaction.user = new User({ id: user_id });
-        walletTransaction.order = order;
-
-        await this.walletTransactionsService.create(
-          walletTransaction,
-          new User({ id: user_id }),
-        );
-      }
-
       // order
       if (isCompleted) {
         await this.ordersService.updateIsPaid(
@@ -359,7 +316,6 @@ export class PaymentsService {
       HashedCardNo,
       ResCode,
       token: Token,
-      IsWalletPayment,
     } = sadadResultPaymentDto;
     const payment_order_id = OrderId;
 
@@ -392,7 +348,6 @@ export class PaymentsService {
         ...payment.payment_provider_data,
 
         hashed_card_number: HashedCardNo,
-        is_Wallet_payment: IsWalletPayment,
         transaction_id: transactionId,
         card_pin: cardPan,
         retrival_ref_number: retrivalRefNo,

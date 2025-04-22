@@ -56,14 +56,6 @@ export class SadadResultPaymentDto {
   })
   @IsString()
   @IsOptional()
-  IsWalletPayment: string;
-
-  @ApiProperty({
-    type: String,
-    required: false,
-  })
-  @IsString()
-  @IsOptional()
   PrimaryAccNo: string;
 
   @ApiProperty({

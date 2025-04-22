@@ -86,6 +86,14 @@ export class CreateProductDto {
   keywords?: string[];
 
   @ApiProperty({
+    required: false,
+    example: 100,
+  })
+  @IsNumber()
+  @IsOptional()
+  available_quantity?: number;
+
+  @ApiProperty({
     required: true,
     example: 10000,
   })

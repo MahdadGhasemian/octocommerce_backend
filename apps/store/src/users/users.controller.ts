@@ -8,7 +8,6 @@ import {
   UserCreatedEvent,
   UserUpdatedEvent,
 } from '@app/common';
-import { WalletsService } from '../wallets/wallets.service';
 import { User } from '@app/store';
 import { ContactsService } from '../contacts/contacts.service';
 
@@ -16,7 +15,6 @@ import { ContactsService } from '../contacts/contacts.service';
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
-    private readonly walletsService: WalletsService,
     private readonly contactsService: ContactsService,
   ) {}
 
@@ -27,13 +25,6 @@ export class UsersController {
 
     // create user
     await this.usersService.create(user);
-
-    // create wallet
-    const wallet = {
-      balance: 0,
-      user: new User(user),
-    };
-    await this.walletsService.create(wallet, new User(user));
 
     // create contact
     const contact = {

@@ -23,7 +23,7 @@ export class ProductsService {
     private readonly productsRepository: ProductsRepository,
     private readonly categoriesService: CategoriesService,
     private readonly settingsService: SettingsService,
-  ) { }
+  ) {}
 
   async create(createProductDto: CreateProductDto) {
     // read setting
@@ -185,6 +185,7 @@ export class ProductsService {
     product.image = updateProductDto.image ?? product.image;
     product.images = updateProductDto.images ?? product.images;
     product.keywords = updateProductDto.keywords ?? product.keywords;
+    product.available_quantity = updateProductDto.available_quantity ?? product.available_quantity;
     product.sale_price = updateProductDto.sale_price ?? product.sale_price;
     product.discount_percentage =
       updateProductDto.discount_percentage ?? product.discount_percentage;
@@ -335,15 +336,15 @@ export class ProductsService {
     // Modify the pagination config to include the descendant category filter
     return categoryIds?.length
       ? {
-        ...query,
-        filter: {
-          ...query.filter,
-          'category.id':
-            categoryIds?.length === 1
-              ? `$eq:${categoryIds[0]}`
-              : categoryIds.map((id) => `$or:$eq:${id}`),
-        },
-      }
+          ...query,
+          filter: {
+            ...query.filter,
+            'category.id':
+              categoryIds?.length === 1
+                ? `$eq:${categoryIds[0]}`
+                : categoryIds.map((id) => `$or:$eq:${id}`),
+          },
+        }
       : query;
   };
 }

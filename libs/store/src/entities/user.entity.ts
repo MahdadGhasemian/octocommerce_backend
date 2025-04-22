@@ -1,9 +1,6 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { Order } from './order.entity';
-import { Wallet } from './wallet.entity';
-import { WalletTransaction } from './wallet_transaction.entity';
 import { Delivery } from './delivery.entity';
-import { Inventory } from './inventory.entity';
 import { AbstractEntity } from '../../../common/src/database/abstract.entity';
 import { Review } from './review.entity';
 import { Question } from './question.entity';
@@ -52,21 +49,6 @@ export class User extends AbstractEntity<User> {
 
   @OneToMany(() => Delivery, (delivery) => delivery.user)
   deliveries: Delivery[];
-
-  @OneToMany(() => Wallet, (wallet) => wallet.user)
-  wallets: Wallet[];
-
-  @OneToMany(
-    () => WalletTransaction,
-    (walletTransaction) => walletTransaction.user,
-  )
-  walletTransactions: WalletTransaction[];
-
-  @OneToMany(() => Inventory, (inventory) => inventory.created_by)
-  created_by_inventories: Inventory[];
-
-  @OneToMany(() => Inventory, (inventory) => inventory.created_by)
-  updated_by_inventories: Inventory[];
 
   @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];

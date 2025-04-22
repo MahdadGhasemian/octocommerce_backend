@@ -8,8 +8,6 @@ import {
 } from 'typeorm';
 import { Category } from './category.entity';
 import { OrderItem } from './order-item.entity';
-import { InventoryItem } from './inventory-item.entity';
-import { Stock } from './stock.entity';
 import { AbstractEntity } from '../../../common/src/database/abstract.entity';
 import { ProductType, MaterialUnit } from '../../../common/src/enum/enums';
 import { Review } from './review.entity';
@@ -49,6 +47,9 @@ export class Product extends AbstractEntity<Product> {
   @Column('jsonb', { nullable: false, default: [] })
   keywords: string[];
 
+  @Column({ default: 0 })
+  available_quantity: number;
+
   @Column('numeric', { precision: 15, scale: 0, default: 0 })
   sale_price: number;
 
@@ -82,12 +83,6 @@ export class Product extends AbstractEntity<Product> {
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
   order_items: OrderItem[];
-
-  @OneToMany(() => InventoryItem, (inventoryItem) => inventoryItem.product)
-  inventory_items: InventoryItem[];
-
-  @OneToMany(() => Stock, (stock) => stock.product)
-  stocks: Stock[];
 
   @OneToMany(() => Review, (review) => review.product)
   reviews: Review[];

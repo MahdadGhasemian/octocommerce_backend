@@ -11,7 +11,6 @@ import {
 
 import { GetExternalSellerDto } from './get-external-seller.dto';
 import { GetProductDto } from './get-product.dto';
-import { GetStockDto } from '../../inventory/dto/get-stock.dto';
 import { GetPackagingCostDto } from './get-packaging-cost.dto';
 
 export class GetProductAdminDto extends GetProductDto {
@@ -58,17 +57,4 @@ export class GetProductAdminDto extends GetProductDto {
   @Type(() => GetPackagingCostDto)
   @Expose()
   packaging_cost?: GetPackagingCostDto;
-
-  @ApiProperty({
-    type: GetStockDto,
-    required: false,
-    isArray: true,
-  })
-  @IsArray()
-  @IsObject({ each: true })
-  @IsNotEmpty({ each: true })
-  @ValidateNested({ each: true })
-  @Type(() => GetStockDto)
-  @Expose()
-  stocks: GetStockDto[];
 }

@@ -78,12 +78,6 @@ export enum TransactionNote {
   DISCOUNT_PROFIT = 'discount_profit',
 }
 
-export enum InventoryType {
-  INPUT = 'input',
-  OUTPUT = 'output',
-  TRANSFER = 'transfer',
-}
-
 export enum OperatorType {
   POSITIVE = 'positive',
   NEGATIVE = 'negative',

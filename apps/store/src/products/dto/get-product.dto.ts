@@ -113,6 +113,15 @@ export class GetProductDto extends AbstractGetDto {
   keywords?: string[];
 
   @ApiProperty({
+    required: false,
+    example: 100,
+  })
+  @IsNumber()
+  @IsOptional()
+  @Expose()
+  available_quantity?: number;
+
+  @ApiProperty({
     required: true,
     example: 10000,
   })

@@ -96,22 +96,6 @@ export class GetOrderDto extends AbstractGetDto {
   @IsNumber()
   @IsOptional()
   @Expose()
-  user_profit_discount_percentage?: number;
-
-  @ApiProperty({
-    required: true,
-  })
-  @IsNumber()
-  @IsOptional()
-  @Expose()
-  user_profit_discount_amount?: number;
-
-  @ApiProperty({
-    required: true,
-  })
-  @IsNumber()
-  @IsOptional()
-  @Expose()
   tax_on_profit_percentage_default?: number;
 
   @ApiProperty({

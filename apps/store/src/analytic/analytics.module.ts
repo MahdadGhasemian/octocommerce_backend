@@ -6,20 +6,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 import { UsersRepository } from '../users/users.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import {
-  Category,
-  Inventory,
-  InventoryItem,
-  Order,
-  OrderItem,
-  Product,
-  Stock,
-  User,
-  Warehouse,
-} from '@app/store';
+import { Category, Order, OrderItem, Product, User } from '@app/store';
 import { ProductsRepository } from '../products/products.repository';
 import { OrdersRepository } from '../orders/orders.repository';
-import { StocksRepository } from '../inventory/stocks.repository';
 
 @Module({
   imports: [
@@ -31,17 +20,7 @@ import { StocksRepository } from '../inventory/stocks.repository';
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([
-      User,
-      Product,
-      Category,
-      Order,
-      OrderItem,
-      Stock,
-      Warehouse,
-      Inventory,
-      InventoryItem,
-    ]),
+    TypeOrmModule.forFeature([User, Product, Category, Order, OrderItem]),
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
@@ -56,7 +35,6 @@ import { StocksRepository } from '../inventory/stocks.repository';
     UsersRepository,
     ProductsRepository,
     OrdersRepository,
-    StocksRepository,
   ],
   exports: [AnalyticsService],
 })
