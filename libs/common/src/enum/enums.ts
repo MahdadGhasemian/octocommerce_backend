@@ -95,12 +95,6 @@ export enum OperatorType {
   NEGATIVE = 'negative',
 }
 
-export enum TaskPriority {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-}
-
 export enum CommentType {
   ACTIVITY = 'activity',
   COMMENT = 'comment',

@@ -9,7 +9,6 @@ import {
   NOTIFICATION_SERVICE,
   RabbitmqModule,
   STORE_SERVICE,
-  TASK_SERVICE,
 } from '@app/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
@@ -51,7 +50,6 @@ import { RedisClientOptions } from 'redis';
       inject: [ConfigService],
     }),
     RabbitmqModule.forRoot(STORE_SERVICE, 'RABBITMQ_STORE_QUEUE_NAME'),
-    RabbitmqModule.forRoot(TASK_SERVICE, 'RABBITMQ_TASK_QUEUE_NAME'),
     RabbitmqModule.forRoot(
       NOTIFICATION_SERVICE,
       'RABBITMQ_NOTIFICATION_QUEUE_NAME',
