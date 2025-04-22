@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { PaymentsController } from './payments.controller';
-import { Payment, Wallet, WalletTransaction, User } from '@app/store';
+import { Payment, User } from '@app/store';
 import { PaymentsRepository } from './payments.repository';
 import { OrdersModule } from '../orders/orders.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { WalletsModule } from '../wallets/wallets.module';
 import { DatabaseModule, SedadProvider } from '@app/common';
 
 @Module({
@@ -18,9 +17,8 @@ import { DatabaseModule, SedadProvider } from '@app/common';
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([User, Payment, Wallet, WalletTransaction]),
+    TypeOrmModule.forFeature([User, Payment]),
     OrdersModule,
-    WalletsModule,
   ],
   controllers: [PaymentsController],
   providers: [

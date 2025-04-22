@@ -11,7 +11,6 @@ import { OrderItem } from './order-item.entity';
 import { Payment } from './payment.entity';
 import { User } from './user.entity';
 import { Delivery } from './delivery.entity';
-import { WalletTransaction } from './wallet_transaction.entity';
 import { AbstractEntity } from '../../../common/src/database/abstract.entity';
 import { ContactType, OrderStatus } from '../../../common/src/enum/enums';
 import { Contact } from './contact.entity';
@@ -60,12 +59,6 @@ export class Order extends AbstractEntity<Order> {
 
   @Column('numeric', { precision: 15, scale: 0, default: 0 })
   discount_amount: number;
-
-  @Column('numeric', { precision: 5, scale: 2, default: 0 })
-  user_profit_discount_percentage: number;
-
-  @Column('numeric', { precision: 15, scale: 0, default: 0 })
-  user_profit_discount_amount: number;
 
   @Column('numeric', { default: 0 })
   tax_on_profit_percentage_default: number;
@@ -152,12 +145,6 @@ export class Order extends AbstractEntity<Order> {
 
   @OneToMany(() => Payment, (payment) => payment.order)
   payments: Payment[];
-
-  @OneToMany(
-    () => WalletTransaction,
-    (wallet_transaction) => wallet_transaction.order,
-  )
-  wallet_transactions: WalletTransaction[];
 
   @Column({ nullable: true })
   @Index()

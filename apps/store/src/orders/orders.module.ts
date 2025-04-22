@@ -9,14 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SettingsModule } from '../settings/settings.module';
 import { ContactsModule } from '../contacts/contacts.module';
-import {
-  Delivery,
-  Order,
-  OrderItem,
-  User,
-  Wallet,
-  WalletTransaction,
-} from '@app/store';
+import { Delivery, Order, OrderItem, User } from '@app/store';
 import { DeliveryMethodsModule } from '../delivery-methods/delivery-methods.module';
 
 @Module({
@@ -28,14 +21,7 @@ import { DeliveryMethodsModule } from '../delivery-methods/delivery-methods.modu
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([
-      User,
-      Order,
-      OrderItem,
-      Wallet,
-      WalletTransaction,
-      Delivery,
-    ]),
+    TypeOrmModule.forFeature([User, Order, OrderItem, Delivery]),
     ProductsModule,
     SettingsModule,
     ContactsModule,

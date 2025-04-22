@@ -7,8 +7,6 @@ export * from './payment.entity';
 export * from './setting.entity';
 export * from './contact.entity';
 export * from './delivery.entity';
-export * from './wallet.entity';
-export * from './wallet_transaction.entity';
 export * from './warehouse.entity';
 export * from './inventory.entity';
 export * from './inventory-item.entity';

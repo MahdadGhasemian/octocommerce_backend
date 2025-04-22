@@ -213,8 +213,6 @@ export class OrdersService {
         packaging_cost,
         delivery_cost,
         discount_amount,
-        user_profit_discount_amount,
-        user_profit_discount_percentage,
         tax_amount,
         total,
         round_amount,
@@ -240,10 +238,6 @@ export class OrdersService {
 
       // discount
       order.discount_amount = discount_amount;
-
-      // profit
-      order.user_profit_discount_amount = user_profit_discount_amount;
-      order.user_profit_discount_percentage = user_profit_discount_percentage;
 
       // tax
       order.tax_amount = tax_amount;
@@ -325,7 +319,6 @@ export class OrdersService {
         billing_contact: true,
         confirmed_rejected_by: true,
         payments: true,
-        wallet_transactions: true,
         delivery: {
           confirmed_rejected_by: true,
         },
@@ -424,30 +417,20 @@ export class OrdersService {
         );
 
       // calculate prices
-      const {
-        discount_amount,
-        user_profit_discount_amount,
-        user_profit_discount_percentage,
-        tax_amount,
-        total,
-        round_amount,
-      } = this.calculatePrices(
-        order.tax_rate_percentage,
-        items_to_calculate_prices,
-        order.delivery.delivery_method,
-        areaRules,
-        setting.delivery_center_latitude,
-        setting.delivery_center_longitude,
-        order.contact.latitude,
-        order.contact.longitude,
-      );
+      const { discount_amount, tax_amount, total, round_amount } =
+        this.calculatePrices(
+          order.tax_rate_percentage,
+          items_to_calculate_prices,
+          order.delivery.delivery_method,
+          areaRules,
+          setting.delivery_center_latitude,
+          setting.delivery_center_longitude,
+          order.contact.latitude,
+          order.contact.longitude,
+        );
 
       // discount
       order.discount_amount = discount_amount;
-
-      // profit
-      order.user_profit_discount_amount = user_profit_discount_amount;
-      order.user_profit_discount_percentage = user_profit_discount_percentage;
 
       // tax
       order.tax_amount = tax_amount;
@@ -620,21 +603,11 @@ export class OrdersService {
         +order.subtotal + +orderItem.sale_price * +orderItem.quantity;
 
       // calculate prices
-      const {
-        discount_amount,
-        user_profit_discount_amount,
-        user_profit_discount_percentage,
-        tax_amount,
-        total,
-        round_amount,
-      } = this.calculatePrices(order.tax_rate_percentage, order.order_items);
+      const { discount_amount, tax_amount, total, round_amount } =
+        this.calculatePrices(order.tax_rate_percentage, order.order_items);
 
       // discount
       order.discount_amount = discount_amount;
-
-      // profit
-      order.user_profit_discount_amount = user_profit_discount_amount;
-      order.user_profit_discount_percentage = user_profit_discount_percentage;
 
       // tax
       order.tax_amount = tax_amount;
@@ -687,21 +660,11 @@ export class OrdersService {
         +order.subtotal + +orderItem.sale_price * +orderItem.quantity;
 
       // calculate prices
-      const {
-        discount_amount,
-        user_profit_discount_amount,
-        user_profit_discount_percentage,
-        tax_amount,
-        total,
-        round_amount,
-      } = this.calculatePrices(order.tax_rate_percentage, order.order_items);
+      const { discount_amount, tax_amount, total, round_amount } =
+        this.calculatePrices(order.tax_rate_percentage, order.order_items);
 
       // discount
       order.discount_amount = discount_amount;
-
-      // profit
-      order.user_profit_discount_amount = user_profit_discount_amount;
-      order.user_profit_discount_percentage = user_profit_discount_percentage;
 
       // tax
       order.tax_amount = tax_amount;
@@ -890,8 +853,6 @@ export class OrdersService {
     delivery_cost: number;
     subtotal: number;
     total: number;
-    user_profit_discount_amount: number;
-    user_profit_discount_percentage: number;
   } => {
     // Rounding Factor
     const rounding_factor = 1;
@@ -918,10 +879,6 @@ export class OrdersService {
     // discount amount
     const discount_amount = 0;
 
-    // profit
-    const user_profit_discount_amount = 0;
-    const user_profit_discount_percentage = 0;
-
     // tax amount
     const tax_amount =
       (subtotal + packaging_cost + delivery_cost) * (tax_rate / 100);
@@ -945,8 +902,6 @@ export class OrdersService {
       delivery_cost,
       subtotal,
       total: totalWithExtras,
-      user_profit_discount_percentage,
-      user_profit_discount_amount,
     };
   };
 

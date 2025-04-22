@@ -10,8 +10,6 @@ export const ORDER_PAGINATION_CONFIG: PaginateConfig<Order> = {
     'subtotal',
     'discount_percentage',
     'discount_amount',
-    'user_profit_discount_percentage',
-    'user_profit_discount_amount',
     'tax_on_profit_percentage_default',
     'tax_rate_percentage',
     'tax_amount',

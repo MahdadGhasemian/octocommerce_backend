@@ -12,7 +12,6 @@ export interface PaymentProviderDataInterface {
   payment_order_id: string;
   token: string;
   hashed_card_number?: string;
-  is_Wallet_payment?: string;
   transaction_id?: string;
   card_pin?: string;
   retrival_ref_number?: string;

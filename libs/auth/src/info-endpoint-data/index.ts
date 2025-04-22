@@ -367,13 +367,6 @@ export const EndpointData = [
     delete: [],
   },
   {
-    key: 'transactions',
-    get: ['/wallets/transactions', '/wallets/my'],
-    post: [],
-    patch: [],
-    delete: [],
-  },
-  {
     key: 'reviews',
     get: ['/reviews', '/reviews/{id}'],
     post: ['/reviews'],

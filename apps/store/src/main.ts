@@ -28,7 +28,6 @@ async function bootstrap() {
     .addTag('Products')
     .addTag('Orders')
     .addTag('Payments')
-    .addTag('Wallets')
     .addTag('Reviews')
     .addTag('Questions')
     .addTag('Supports')
