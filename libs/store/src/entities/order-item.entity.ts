@@ -1,14 +1,6 @@
-import {
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { Product } from './product.entity';
 import { Order } from './order.entity';
-import { InventoryItem } from './inventory-item.entity';
 import { AbstractEntity } from '../../../common/src/database/abstract.entity';
 
 @Entity()
@@ -33,7 +25,4 @@ export class OrderItem extends AbstractEntity<OrderItem> {
   @ManyToOne(() => Product, (product) => product.order_items)
   @JoinColumn({ name: 'product_id' })
   product: Product;
-
-  @OneToMany(() => InventoryItem, (inventoryItem) => inventoryItem.order_item)
-  inventory_items: InventoryItem[];
 }

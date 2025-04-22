@@ -308,12 +308,6 @@ export class OrdersService {
           product: {
             category: true,
           },
-          inventory_items: {
-            inventory: true,
-            warehouse: true,
-            warehouse_from: true,
-            warehouse_to: true,
-          },
         },
         contact: true,
         billing_contact: true,

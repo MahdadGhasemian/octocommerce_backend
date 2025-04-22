@@ -88,6 +88,14 @@ export class UpdateProductDto {
 
   @ApiProperty({
     required: false,
+    example: 100,
+  })
+  @IsNumber()
+  @IsOptional()
+  available_quantity?: number;
+
+  @ApiProperty({
+    required: false,
     example: 10000,
   })
   @IsNumber()

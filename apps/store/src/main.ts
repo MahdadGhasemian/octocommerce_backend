@@ -22,8 +22,6 @@ async function bootstrap() {
     .addTag('Analytics')
     .addTag('Settings')
     .addTag('Contacts')
-    .addTag('Warehouses')
-    .addTag('Inventories')
     .addTag('Categories')
     .addTag('Products')
     .addTag('Orders')

@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 import { IsArray, IsNumber } from 'class-validator';
 import { GetProductDto } from './get-product.dto';
-import { GetInventoryItemDto } from './get-inventory-item.dto';
 
 export class GetOrderItemDto {
   @ApiProperty({
@@ -28,16 +27,6 @@ export class GetOrderItemDto {
   @Type(() => GetProductDto)
   @Expose()
   product: GetProductDto;
-
-  @ApiProperty({
-    type: GetInventoryItemDto,
-    required: false,
-    isArray: true,
-  })
-  @IsArray()
-  @Type(() => GetInventoryItemDto)
-  @Expose()
-  inventory_items?: GetInventoryItemDto[];
 
   @ApiProperty({
     required: true,
